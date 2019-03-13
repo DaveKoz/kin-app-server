@@ -423,7 +423,8 @@ def post_user_task_results_endpoint():
 
         memo = get_and_replace_next_task_memo(user_id, task_id)
         do_captcha_stuff(user_id) # raise captcha flag if needed
-        split_payment(address, task_id, send_push, user_id, memo, delta)
+        reward_address_for_task_internal_payment_service(address, task_id, send_push, user_id, memo, delta)
+        #reward_and_push(address, task_id, send_push, user_id, memo, delta)
 
     except Exception as e:
         print('exception: %s' % e)
@@ -431,31 +432,6 @@ def post_user_task_results_endpoint():
 
     increment_metric('task_completed')
     return jsonify(status='ok', memo=str(memo))
-
-
-def split_payment(address, task_id, send_push, user_id, memo, delta):
-    """this function calls either the payment service or the internal sdk to pay the user
-
-    this function will eventually be replaced, once we're sure the payment service is working
-    as intended.
-    """
-    use_payment_service = False
-    try:
-        phone_number = get_unenc_phone_number_by_user_id(user_id)
-        if phone_number and phone_number.find(config.USE_PAYMENT_SERVICE_PHONE_NUMBER_PREFIX) >= 0:  # like '+' or '+972' or '++' for (all, israeli numbers, nothing)
-            user_rolled = random_percent()
-            #print('split_payment: user rolled: %s, config: %s' % (user_rolled, config.USE_PAYMENT_SERVICE_PERCENT_OF_USERS))
-            if int(user_rolled) <= int(config.USE_PAYMENT_SERVICE_PERCENT_OF_USERS):
-                print('using payment service for user_id %s' % user_id)
-                use_payment_service = True
-    except Exception as e:
-        log.error('cant determine whether to use the payment service for user_id %s. defaulting to no' % user_id)
-
-    if use_payment_service:
-        reward_address_for_task_internal_payment_service(address, task_id, send_push, user_id, memo, delta)
-    else:
-        reward_and_push(address, task_id, send_push, user_id, memo, delta)
-
 
 @app.route('/user/category/<cat_id>/tasks', methods=['GET'])
 def get_next_task_for_categories_endpoint(cat_id):
