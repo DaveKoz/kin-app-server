@@ -64,11 +64,54 @@ def send_kin_with_payment_service(public_address, amount, memo=None):
     }
 
     try:
+        log.debug('posting %s/payments' % config.PAYMENT_SERVICE_URL)
         res = requests.post('%s/payments' % config.PAYMENT_SERVICE_URL, headers=headers, json=payment_payload)
         res.raise_for_status()
     except Exception as e:
         increment_metric('send_kin_error')
         print('caught exception sending %s kin to address %s using the payment service' % (amount, public_address))
+        print(e)
+
+
+def whitelist(id, sender_address, recipient_address, amount, xdr):
+    """whitelist transaction"""
+    if id in (None, ''):
+        return False, None
+
+    if sender_address in (None, ''):
+        log.error('cant send kin to address: %s' % sender_address)
+        return False, None
+
+    if recipient_address in (None, ''):
+        return False, None
+
+    if xdr in (None, ''):
+        return False, None
+
+    if amount is None or amount < 1:
+        log.error('cant send kin amount: %s' % amount)
+        return False, None
+
+    print('sending kin from %s to address: %s' %(sender_address, recipient_address))
+    headers = {'X-REQUEST-ID': str(random.randint(1, 1000000))}  # doesn't actually matter
+    payment_payload = {
+        'id': id,
+        'sender_address': sender_address,
+        'recipient_address': recipient_address,
+        'amount': amount,
+        'xdr': xdr,
+        'app_id': 'kit',
+        'network_id': config.STELLAR_NETWORK
+    }
+
+    try:
+        log.debug('posting %s/tx/whitelist ' % config.PAYMENT_SERVICE_URL)
+        res = requests.post('%s/tx/whitelist' % config.PAYMENT_SERVICE_URL, headers=headers, json=payment_payload)
+        res.raise_for_status()
+        return res
+    except Exception as e:
+        increment_metric('whitelist_error')
+        print('caught exception while whitelisting transaction from %s to %s' % (sender_address, recipient_address))
         print(e)
 
 

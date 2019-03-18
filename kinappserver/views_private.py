@@ -1007,3 +1007,4 @@ def send_kin_with_payment_service_api():
         return jsonify(status='ok')
     else:
         raise InvalidUsage('failed to send %d kin to %s', amount, public_address)
+
