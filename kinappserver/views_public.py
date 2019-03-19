@@ -260,10 +260,10 @@ def whitelist_transaction():
         sender_address = payload.get('sender_address', None)
         recipient_address = payload.get('recipient_address', None)
         amount = payload.get('amount', None)
-        xdr = payload.get('xdr', None)
+        transaction = payload.get('transaction', None)
         captcha_token = payload.get('captcha_token', None)  # optional
 
-        if None in (user_id, id, sender_address, recipient_address, amount, xdr):
+        if None in (user_id, id, sender_address, recipient_address, amount, transaction):
             log.error('failed input checks on /user/submit_transaction')
             raise InvalidUsage('bad-request')
     except Exception as e:
@@ -274,7 +274,7 @@ def whitelist_transaction():
     if auth_status != 'authorized':
         return jsonify(status='denied', reason=auth_status)
 
-    ret = whitelist(id, sender_address, recipient_address, int(amount), xdr)
+    ret = whitelist(id, sender_address, recipient_address, int(amount), transaction)
 
     print('whitelist returned %s ' % ret)
 

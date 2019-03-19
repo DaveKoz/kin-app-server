@@ -69,12 +69,6 @@ class Tester(unittest.TestCase):
                     content_type='application/json')
         self.assertEqual(resp.status_code, 200)
 
-        # id = payload.get('id', None)
-        # sender_address = payload.get('from_address', None)
-        # recipient_address = payload.get('to_address', None)
-        # amount = payload.get('amount', None)
-        # xdr = payload.get('xdr', None)
-
         # request to
         resp = self.app.post('/user/whitelist',
                     data=json.dumps({
@@ -82,7 +76,7 @@ class Tester(unittest.TestCase):
                     'sender_address': 'GD6UWGMWGW5VLM4ZLIC3OXPV772W55IVFAH5RZK36CUYQDK7FSMJLDMJ',
                     'recipient_address':'GCSD5FPNKSTAOPDZ2OWMFPJEBRD3HWPTDICTS4PTOKESOJHNLQUDVSGA',
                     'amount':3,
-                    'xdr':'AAAAAP1LGZY1u1WzmVoFt131//Vu9RUoD9jlW/CpiA1fLJiVAAAAAAAXjnUAAAABAAAAAAAAAAEAAAAGMS1raXQtAAAAAAABAAAAAAAAAAEAAAAApD6V7VSmBzx506zCvSQMR7PZ8xoFOXHzcoknJO1cKDoAAAAAAAAAAAAEk+AAAAAAAAAAAV8smJUAAABAhfjmQkqeeKRZGmmtiivXynmregpE0yNKHP3yVIrbT0pSQg6jjlDNnTUQrWbptHhYGyx76SdbocYYCxX//qE1Ag=='
+                    'transaction':'AAAAAP1LGZY1u1WzmVoFt131//Vu9RUoD9jlW/CpiA1fLJiVAAAAAAAXjnUAAAABAAAAAAAAAAEAAAAGMS1raXQtAAAAAAABAAAAAAAAAAEAAAAApD6V7VSmBzx506zCvSQMR7PZ8xoFOXHzcoknJO1cKDoAAAAAAAAAAAAEk+AAAAAAAAAAAV8smJUAAABAhfjmQkqeeKRZGmmtiivXynmregpE0yNKHP3yVIrbT0pSQg6jjlDNnTUQrWbptHhYGyx76SdbocYYCxX//qE1Ag=='
                     }),
                     headers={USER_ID_HEADER: str(userid1)},
                     content_type='application/json')

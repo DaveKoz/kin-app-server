@@ -74,7 +74,7 @@ def send_kin_with_payment_service(public_address, amount, memo=None):
         print(e)
 
 
-def whitelist(id, sender_address, recipient_address, amount, xdr):
+def whitelist(id, sender_address, recipient_address, amount, transaction):
     """whitelist transaction"""
     if id in (None, ''):
         return False, None
@@ -86,7 +86,7 @@ def whitelist(id, sender_address, recipient_address, amount, xdr):
     if recipient_address in (None, ''):
         return False, None
 
-    if xdr in (None, ''):
+    if transaction in (None, ''):
         return False, None
 
     if amount is None or amount < 1:
@@ -100,7 +100,7 @@ def whitelist(id, sender_address, recipient_address, amount, xdr):
         'sender_address': sender_address,
         'recipient_address': recipient_address,
         'amount': amount,
-        'xdr': xdr,
+        'transaction': transaction,
         'app_id': 'kit',
         'network_id': config.STELLAR_NETWORK
     }
