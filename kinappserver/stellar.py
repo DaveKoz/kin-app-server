@@ -46,14 +46,14 @@ def send_kin_with_payment_service(public_address, amount, memo=None):
 
     #  sanity:
     if public_address in (None, ''):
-        log.error('cant send kin to address: %s' % public_address)
+        log.error('###2 cant send kin to address: %s' % public_address)
         return False, None
 
     if amount is None or amount < 1:
-        log.error('cant send kin amount: %s' % amount)
+        log.error('###2 cant send kin amount: %s' % amount)
         return False, None
 
-    print('sending kin to address: %s' % public_address)
+    print('###2 sending kin to address: %s' % public_address)
     headers = {'X-REQUEST-ID': str(random.randint(1, 1000000))}  # doesn't actually matter
     payment_payload = {
         'id': memo,
@@ -64,12 +64,13 @@ def send_kin_with_payment_service(public_address, amount, memo=None):
     }
 
     try:
-        log.debug('posting %s/payments' % config.PAYMENT_SERVICE_URL)
+        print('###2 posting %s/payments, payment_payload %s' % (config.PAYMENT_SERVICE_URL, payment_payload))
         res = requests.post('%s/payments' % config.PAYMENT_SERVICE_URL, headers=headers, json=payment_payload)
+        print('###2 payment result: %s' % res)
         res.raise_for_status()
     except Exception as e:
         increment_metric('send_kin_error')
-        print('caught exception sending %s kin to address %s using the payment service' % (amount, public_address))
+        print('###2 caught exception sending kin to address %s using the payment service' % public_address)
         print(e)
 
 
@@ -79,7 +80,7 @@ def whitelist(id, sender_address, recipient_address, amount, xdr):
         return False, None
 
     if sender_address in (None, ''):
-        log.error('cant send kin to address: %s' % sender_address)
+        log.error('###1 cant send kin to address: %s' % sender_address)
         return False, None
 
     if recipient_address in (None, ''):
@@ -89,10 +90,10 @@ def whitelist(id, sender_address, recipient_address, amount, xdr):
         return False, None
 
     if amount is None or amount < 1:
-        log.error('cant send kin amount: %s' % amount)
+        log.error('###1 cant send kin amount: %s' % amount)
         return False, None
 
-    print('sending kin from %s to address: %s' %(sender_address, recipient_address))
+    print('###1 sending kin from %s to address: %s' %(sender_address, recipient_address))
     headers = {'X-REQUEST-ID': str(random.randint(1, 1000000))}  # doesn't actually matter
     payment_payload = {
         'id': id,
@@ -105,13 +106,14 @@ def whitelist(id, sender_address, recipient_address, amount, xdr):
     }
 
     try:
-        log.debug('posting %s/tx/whitelist ' % config.PAYMENT_SERVICE_URL)
+        print('###1 posting %s/tx/whitelist payload: %s' % (config.PAYMENT_SERVICE_URL, payment_payload))
         res = requests.post('%s/tx/whitelist' % config.PAYMENT_SERVICE_URL, headers=headers, json=payment_payload)
+        print('###1 whitelist result: %s' % res)
         res.raise_for_status()
         return res
     except Exception as e:
         increment_metric('whitelist_error')
-        print('caught exception while whitelisting transaction from %s to %s' % (sender_address, recipient_address))
+        print('###1 caught exception while whitelisting transaction from %s to %s' % (sender_address, recipient_address))
         print(e)
 
 
